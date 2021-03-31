@@ -1,4 +1,6 @@
 sudo: required
+language: generic
+
 services:
   - docker
 
@@ -6,7 +8,7 @@ before_install:
   - docker build -t fdsasa/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run fdsasa/react-test npm test -- --coverage
+  - docker run -e CI=true fdsasa/react-test npm test
 
 after_success:
   - docker build -t fdsasa/multi-client ./client
@@ -15,7 +17,7 @@ after_success:
   - docker build -t fdsasa/multi-worker ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push to docker hub
+  # Take those images and push them to docker hub
   - docker push fdsasa/multi-client
   - docker push fdsasa/multi-nginx
   - docker push fdsasa/multi-server
